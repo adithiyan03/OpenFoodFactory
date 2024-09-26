@@ -6,36 +6,44 @@ from scripts.validation import predict_entities
 from transformers import BertTokenizer
 import torch
 
-def load_config(config_path='config/config.yaml'):
-    with open(config_path, 'r') as file:
-        return yaml.safe_load(file)
 
 def main():
+    config_path = 'config/config.yaml'
+    csv_path = 'data/openfoodfactory.csv'
+
     # Load configuration
-    config = load_config()
+    config = load_config(config_path)
     nutrient_buckets = config['nutrient_buckets']
 
     # Prepare data from CSV
-    texts, labels = prepare_data_from_csv('data/openfoodfactory.csv', nutrient_buckets)
+    texts, labels = prepare_data_from_csv(csv_path, nutrient_buckets)
 
     # Train the model
-    train_model(texts, labels)
+    train_bert_model(texts, labels)
 
-    # Extract text from image
-    image_path = 'path/to/your/image.png'
-    extracted_text = extract_text_from_image(image_path)
+    # Extract and process images
+    text_tensors = extract_and_process_images(csv_path)
 
-    # Load trained model
-    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-    model = BertForTokenClassification.from_pretrained('bert-base-uncased', num_labels=2)
-    model.load_state_dict(torch.load('model.pt'))
+    # Convert list of text tensors to a tensor dataset
+    text_tensors = [torch.tensor(tensor, dtype=torch.int32) for tensor in text_tensors]
+    tensor_dataset = TensorDataset(*text_tensors)  # TensorDataset does not need labels here
 
-    # Predict entities in the extracted text
-    tokens, predicted_labels = predict_entities(extracted_text, model, tokenizer)
+    # Create DataLoader
+    dataloader = DataLoader(tensor_dataset, batch_size=4, shuffle=False)
 
-    # Print results
-    print("Tokens:", tokens)
-    print("Predicted Labels:", predicted_labels)
+    # Load the trained model
+    model, tokenizer = load_model()
+
+    # Predict entities in batches
+    model.eval()
+    for batch in dataloader:
+        batch_texts = [tensor.numpy().astype(str) for tensor in batch]
+        
+        for text in batch_texts:
+            text_str = ''.join(map(chr, text))
+            tokens, predicted_labels = predict_entities(text_str, model, tokenizer)
+            print(f"Predicted labels for text: {text_str}")
+            print(predicted_labels)
 
 if __name__ == '__main__':
     main()
