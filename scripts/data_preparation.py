@@ -1,34 +1,8 @@
 import pandas as pd
+import numpy as np
+from typing import List, Dict, Tuple
 
-def prepare_data_for_bert(text_data: str, nutrient_buckets: dict) -> tuple:
-    """
-    Prepare data for BERT model.
-    
-    Parameters:
-    - text_data: Extracted text from OCR.
-    - nutrient_buckets: Dictionary for mapping columns to labels.
-    
-    Returns:
-    - Tuple of input strings and corresponding labels.
-    """
-    # Extract nutritional information from text_data
-    # This is a simplified example; actual implementation may vary
-    
-    tokens = []
-    labels = []
-    
-    for line in text_data.split('\n'):
-        for word in line.split():
-            # Create token and label
-            token = f"{word}"
-            label = map_column_to_label(word, nutrient_buckets)  # Define map_column_to_label function based on your needs
-            
-            tokens.append(token)
-            labels.append(label)
-    
-    return ' '.join(tokens), ' '.join(labels)
-
-def map_column_to_label(column: str, nutrient_buckets: dict) -> str:
+def map_column_to_label(column: str, nutrient_buckets: Dict) -> str:
     """
     Map column name to label.
     
@@ -39,5 +13,45 @@ def map_column_to_label(column: str, nutrient_buckets: dict) -> str:
     Returns:
     - Label as a string.
     """
-    # Simplified example, needs actual implementation
-    return "B-Nutrient" if column in nutrient_buckets else "O"
+    for category, nutrients in nutrient_buckets.items():
+        for nutrient, columns in nutrients.items():
+            if column in columns:
+                return f"B-{nutrient.replace(' ', '-').upper()}"  # Example: B-VITAMINS
+    return "O"  # Use "O" for non-nutrient labels
+
+def prepare_data_from_csv(csv_file: str, nutrient_buckets: Dict) -> Tuple[List[str], List[List[int]]]:
+    """
+    Prepare data for BERT model from CSV.
+    
+    Parameters:
+    - csv_file: Path to the CSV file.
+    - nutrient_buckets: Dictionary for mapping columns to labels.
+    
+    Returns:
+    - Tuple of input strings and corresponding labels.
+    """
+    df = pd.read_csv(csv_file)
+    texts, labels = [], []
+
+    for index, row in df.iterrows():
+        tokens = []
+        label_ids = []
+        
+        for column in df.columns:
+            value = row[column]
+            if pd.notna(value):  # Only include non-NaN values
+                token = f"{column} {value}"
+                label = map_column_to_label(column, nutrient_buckets)
+                
+                tokens.append(token)
+                label_ids.append(label)
+        
+        if tokens:
+            texts.append(' '.join(tokens))
+            labels.append(label_ids)
+
+    # Pad labels to ensure all sequences are of the same length
+    max_len = max(len(label) for label in labels)
+    labels = [label + [0] * (max_len - len(label)) for label in labels]  # Padding with 0 for non-nutrient labels
+
+    return texts, labels

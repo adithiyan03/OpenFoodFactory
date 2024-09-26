@@ -9,3 +9,61 @@ training:
   epochs: 3
   batch_size: 16
   learning_rate: 1e-5
+# Configuration file for nutrient buckets
+
+nutrient_buckets:
+  Major Nutrients:
+    Energy:
+      - 'energy-kj_100g'
+      - 'energy-kcal_100g'
+      - 'energy_100g'
+    Fats:
+      - 'fat_100g'
+      - 'saturated-fat_100g'
+      - 'unsaturated-fat_100g'
+      - 'monounsaturated-fat_100g'
+      - 'polyunsaturated-fat_100g'
+      - 'trans-fat_100g'
+      - 'cholesterol_100g'
+    Proteins:
+      - 'proteins_100g'
+    Carbohydrates:
+      - 'carbohydrates_100g'
+  Minor Nutrients:
+    Vitamins:
+      - 'vitamin-a_100g'
+      - 'vitamin-c_100g'
+      - 'vitamin-d_100g'
+      - 'vitamin-e_100g'
+      - 'vitamin-k_100g'
+      - 'vitamin-b1_100g'
+      - 'vitamin-b2_100g'
+      - 'vitamin-b6_100g'
+      - 'vitamin-b9_100g'
+      - 'vitamin-b12_100g'
+    Minerals:
+      - 'calcium_100g'
+      - 'iron_100g'
+      - 'magnesium_100g'
+      - 'zinc_100g'
+      - 'potassium_100g'
+  Trace Nutrients:
+    Fatty Acids:
+      - 'butyric-acid_100g'
+      - 'caproic-acid_100g'
+      - 'caprylic-acid_100g'
+      - 'linoleic-acid_100g'
+      - 'arachidonic-acid_100g'
+    Other Nutrients:
+      - 'caffeine_100g'
+      - 'taurine_100g'
+      - 'choline_100g'
+      - 'nucleotides_100g'
+  Non-Nutrients:
+    Other Factors:
+      - 'glycemic-index_100g'
+      - 'water-hardness_100g'
+      - 'acidity_100g'
+      - 'nutrition-score-fr_100g'
+      - 'carbon-footprint_100g'
+      - 'nutrition-score-uk_100g'
