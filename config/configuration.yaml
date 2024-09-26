@@ -1,0 +1,11 @@
+image:
+  size: [1280, 720]
+ocr:
+  lang: "eng"
+bert:
+  model_name: "bert-base-uncased"
+  num_labels: 2
+training:
+  epochs: 3
+  batch_size: 16
+  learning_rate: 1e-5
