@@ -14,8 +14,6 @@ training:
 nutrient_buckets:
   Major Nutrients:
     Energy:
-      - 'energy-kj_100g'
-      - 'energy-kcal_100g'
       - 'energy_100g'
     Fats:
       - 'fat_100g'

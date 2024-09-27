@@ -19,8 +19,7 @@ This project aims to automate the extraction of nutritional information from pro
 ├── /data
 │   └── (place your images and other raw data files here)
 ├── /scripts
-│   ├── data_processing.py       # Functions for preparing and processing raw data (images, text)
-|   ├── model_utils.py           # Helper functions for model-related tasks (e.g., saving/loading)
+│   ├── preprocessing.py         # Image preprocessing functions
 │   ├── ocr.py                   # OCR functions
 │   ├── data_preparation.py      # Functions to prepare data for BERT
 │   ├── model_training.py        # Model training functions

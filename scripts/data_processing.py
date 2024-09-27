@@ -1,7 +1,8 @@
 import pandas as pd
+import numpy as np
 import torch
 from ocr import extract_text_from_image
-from utils import download_preprocess_image
+from scripts.utils import download_preprocess_image
 
 def map_column_to_label(column: str, nutrient_buckets: dict) -> str:
     """
