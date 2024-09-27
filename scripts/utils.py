@@ -3,6 +3,7 @@ from torchvision import transforms
 from PIL import Image
 import requests
 from io import BytesIO
+from config import configuration
 
 def load_config(config_path: str) -> dict:
     """
@@ -31,7 +32,7 @@ def download_preprocess_image(url: str):
     
     response = requests.get(url)
     image = Image.open(BytesIO(response.content))
-    img = image.resize(resize)
+    img = image.resize(configuration.resize)
     
     # Normalize image using torchvision transforms
     transform = transforms.Compose([

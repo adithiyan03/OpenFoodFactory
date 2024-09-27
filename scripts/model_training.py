@@ -16,7 +16,7 @@ class NutrientDataset(Dataset):
         label_ids = self.labels[idx]
         return {**tokens, 'labels': torch.tensor(label_ids)}
 
-def train_model(train_texts: List[str], train_labels: List[List[int]], model_path='model.pt'):
+def train_bert_model(train_texts: List[str], train_labels: List[List[int]], model_path='model.pt'):
     """
     Train the BERT model.
     

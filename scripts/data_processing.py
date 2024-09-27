@@ -1,8 +1,8 @@
 import pandas as pd
-import numpy as np
-import torch
-from ocr import extract_text_from_image
 from scripts.utils import download_preprocess_image
+from scripts.ocr import perform_ocr
+from torchvision import transforms
+from transformers import BertTokenizer
 
 def map_column_to_label(column: str, nutrient_buckets: dict) -> str:
     """
@@ -55,29 +55,78 @@ def prepare_data_from_csv(csv_path: str, nutrient_buckets: dict) -> tuple:
     
     return X, Y
 
-def extract_and_process_images(csv_path: str) -> list:
+def preprocess_image(img, resize=(224, 224)):
+    transform = transforms.Compose([
+        transforms.Resize(resize),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    ])
+    img = transform(img)
+    return img
+
+def convert_text_to_tensor(text, tokenizer):
     """
-    Read image URLs from the CSV, download images, perform OCR, and convert text to tensor.
+    Convert text to tensor using BERT tokenizer.
     
     Parameters:
-    - csv_path: Path to the CSV file containing image URLs.
+    - text (str): The input text to convert.
+    - tokenizer: The BERT tokenizer instance.
     
     Returns:
-    - List of tensors representing extracted text.
+    - torch.Tensor: Tensor representation of the text.
+    """
+    inputs = tokenizer(text, return_tensors='pt')
+    return inputs['input_ids'].flatten()
+
+
+def extract_and_process_image(csv_path, method='BERT'):
+    """
+    Extract text from images specified in a CSV file and process it.
+    
+    Parameters:
+    - csv_path (str): Path to the CSV file containing image URLs.
+    - method (str): Method to use ('BERT' or 'LLM'). Determines the output format.
+    
+    Returns:
+    - list: List of text tensors if method is 'BERT', otherwise list of plain text strings.
     """
     df = pd.read_csv(csv_path)
-    text_tensors = []
+    text_outputs = []
     
-    for index, row in df.iterrows():
-        image_url = row.get('image_nutrition_url')
-        if pd.notna(image_url):
-            try:
-                image = download_preprocess_image(image_url)
-                extracted_text = extract_text_from_image(image)
-                text_tensor = torch.tensor(list(map(ord, extracted_text)), dtype=torch.int32)
-                text_tensors.append(text_tensor)
-                
-            except Exception as e:
-                print(f"Error processing image at index {index}: {e}")
+    if method == 'BERT':
+        tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+        
+    for _, row in df.iterrows():
+        image_url = row.get('image_url_ingredients')
+        if image_url:
+            text = extract_text_from_image(image_url)
+            if method == 'BERT':
+                text_tensor = convert_text_to_tensor(text, tokenizer)
+                text_outputs.append(text_tensor)
+            elif method == 'LLM':
+                text_outputs.append(text)
     
-    return text_tensors
+    return text_outputs
+
+def extract_text_from_image(image_url: str) -> str:
+    """
+    Extracts text from an image provided at the given URL.
+
+    Parameters:
+    - image_url (Any): The URL of the image from which to extract text.
+
+    Returns:
+    - str: The extracted text from the image.
+    """
+    try:
+        # Fetch the image from the URL
+        img = download_preprocess_image(image_url)
+
+        # Use pytesseract to perform OCR on the image
+        extracted_text = perform_ocr(img)
+
+        return extracted_text
+
+    except Exception as e:
+        print(f"Error extracting text from image: {e}")
+        return ""

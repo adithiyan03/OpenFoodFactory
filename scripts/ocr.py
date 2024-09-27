@@ -1,3 +1,4 @@
+import numpy as np
 from pytesseract import image_to_string
 
 def perform_ocr(image: np.ndarray) -> str:

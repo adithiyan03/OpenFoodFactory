@@ -75,7 +75,7 @@ def parse_llm_output(output_text):
         }
     return result
 
-def perform_llm_ner_and_category(texts, model_name="EleutherAI/gpt-j-6B"):
+def call_llm(texts, model_name="EleutherAI/gpt-j-6B"):
     """
     Process a list of texts using an open-source LLM for NER and category classification.
     

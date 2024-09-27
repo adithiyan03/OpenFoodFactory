@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project aims to automate the extraction of nutritional information from product images. The pipeline includes image preprocessing, optical character recognition (OCR), data preparation for BERT (Bidirectional Encoder Representations from Transformers), and model training and validation. Additionally, the system integrates an open-source Large Language Model (LLM) for classification tasks.
+This project aims to automate the extraction of nutritional information from product images. The pipeline includes image preprocessing, optical character recognition (OCR), data preparation for BERT (Bidirectional Encoder Representations from Transformers), and model training and validation.
 
 ## Features
 
@@ -11,7 +11,6 @@ This project aims to automate the extraction of nutritional information from pro
 - **Data Preparation**: Prepare extracted text for BERT, including mapping nutritional values to labels.
 - **Model Training**: Train a BERT-based model for entity tagging and classification.
 - **Validation**: Evaluate the trained model to ensure its accuracy and performance.
-- **Open Source LLM Integration**: Use an LLM for classification and categorization of extracted text.
 
 ## Folder Structure
 
@@ -24,10 +23,9 @@ This project aims to automate the extraction of nutritional information from pro
 │   ├── ocr.py                   # OCR functions
 │   ├── data_preparation.py      # Functions to prepare data for BERT
 │   ├── model_training.py        # Model training functions
-│   ├── validation.py            # Model validation functions
-│   └── llm_integration.py       # Functions for LLM loading, prompting, and output parsing
+│   └── validation.py            # Model validation functions
 ├── /config
-│   └── configuration.yaml              # Configuration file for parameters and settings
+│   └── config.yaml              # Configuration file for parameters and settings
 ├── /results
 │   └── (output from model training and evaluation, like saved models and logs)
 ├── /logs

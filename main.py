@@ -1,11 +1,12 @@
 import yaml
-from scripts.data_preparation import prepare_data_from_csv
-from llm_processing import perform_llm_ner_and_category
-from scripts.model_training import train_model
-from scripts.ocr import extract_text_from_image
-from scripts.validation import predict_entities
-from transformers import BertTokenizer
 import torch
+from torch.utils.data import DataLoader, TensorDataset
+from scripts.data_processing import extract_and_process_image
+from scripts.data_processing import prepare_data_from_csv
+from scripts.utils import load_config
+from scripts.llm_processing import call_llm
+from scripts.model_training import train_bert_model, load_model
+from scripts.validation import predict_entities
 
 
 def main():
@@ -19,6 +20,7 @@ def main():
 
     # Prepare data from CSV
     texts, labels = prepare_data_from_csv(csv_path, nutrient_buckets)
+    
 
     if method == 'BERT':
             
@@ -26,7 +28,7 @@ def main():
             train_bert_model(texts, labels)
 
             # Extract and process images
-            text_tensors = extract_and_process_images(csv_path)
+            text_tensors = extract_and_process_image(csv_path)
 
             # Convert list of text tensors to a tensor dataset
             text_tensors = [torch.tensor(tensor, dtype=torch.int32) for tensor in text_tensors]
@@ -51,13 +53,13 @@ def main():
 
     elif method == 'LLM':
         # Extract and process images
-        text_tensors = extract_and_process_images(csv_path)
+        text_tensors = extract_and_process_image(csv_path)
 
         # Convert list of text tensors to a list of strings
         texts = [''.join(map(chr, tensor.numpy())) for tensor in text_tensors]
 
         # Perform LLM-based NER and classification
-        llm_results = perform_llm_ner_and_category(texts)
+        llm_results = call_llm(texts)
         print("LLM Results:")
         print(llm_results)
 
