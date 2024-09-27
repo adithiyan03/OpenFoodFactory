@@ -27,7 +27,7 @@ This project aims to automate the extraction of nutritional information from pro
 │   ├── validation.py            # Model validation functions
 │   └── llm_integration.py       # Functions for LLM loading, prompting, and output parsing
 ├── /config
-│   └── config.yaml              # Configuration file for parameters and settings
+│   └── configuration.yaml              # Configuration file for parameters and settings
 ├── /results
 │   └── (output from model training and evaluation, like saved models and logs)
 ├── /logs
