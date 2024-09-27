@@ -1,6 +1,22 @@
-transformers
-torch
-opencv-python
-pytesseract
-pandas
-pyyaml
+# For working with data
+pandas==2.0.0
+
+# For image processing
+Pillow==9.5.0
+
+# For OCR
+pytesseract==0.3.10
+tesseract-ocr==5.2.0
+
+# For model training and inference
+torch==2.0.0
+transformers==4.36.0
+
+# For HTTP requests (LLM API calls)
+requests==2.31.0
+
+# For YAML configuration
+pyyaml==6.0
+
+# Optional: For logging
+loguru==0.6.0
